@@ -6,15 +6,16 @@ namespace ConsoleApp19
     {
         static void Main(string[] args)
         {
-            Money[] wallets =
-            {
-                new Money(5, 0),
-                new USD(100, 50),
-                new EUR(30, 33),
-                new UAH(26000, 84)
-            };
+            var price = new Money(100, 50);
+            var ds = new Money(90, 50);
+            price.Show("USD");
 
-            foreach (var wallet in wallets) { wallet.Print(); }
+            Console.WriteLine();
+            var product = new Product("Книга", price);
+            product.Show("USD");
+
+            product.ReducePrice(ds);
+            product.Show("USD");
         }
     }
 }

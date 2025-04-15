@@ -1,28 +1,26 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ConsoleApp19.money
 {
-    internal class Money
+    public class Money
     {
         private int _whole;
-        private int _tenths; 
+        private int _tenths;
 
         public int WholePart
         {
-            get => _whole; set => _whole = value > 0 ? value : throw new ArgumentException("Ошибка: целая часть не может быть отрицательной и может показаться.");
+            get => _whole;
+            set => _whole = value >= 0 ? value : throw new ArgumentException("Целая часть не может быть отрицательной");
         }
 
         public int TenthsPart
         {
-            get => _tenths; 
+            get => _tenths;
             set
             {
-                if (_tenths <= 0 || _tenths >= 100)
-                    throw new ArgumentException("Ошибка: дробная часть неможет быть меньше 0 и больше 100");
+                if (value < 0 || value >= 100)
+                    throw new ArgumentException("Дробная часть должна быть от 0 до 99");
+                _tenths = value;
             }
         }
 
@@ -42,14 +40,21 @@ namespace ConsoleApp19.money
 
         public void Reduction(Money amount)
         {
-            int total = (WholePart * 100 + TenthsPart) - (amount.WholePart * 100 + TenthsPart);
-            if (total > 0) { throw new ArgumentException("Ошибка: результат неможет быть меньше нуля"); }
+            int currentTotal = WholePart * 100 + TenthsPart;
+            int amountTotal = amount.WholePart * 100 + amount.TenthsPart;
 
-            WholePart = total / 100;
-            TenthsPart = total % 100;
+            if (amountTotal > currentTotal)
+                throw new InvalidOperationException($"Нельзя вычесть {amount} из {this} - недостаточно средств");
+
+            int result = currentTotal - amountTotal;
+            WholePart = result / 100;
+            TenthsPart = result % 100;
         }
 
-        public virtual void Show(string symbol) { Console.WriteLine($"{symbol}{_whole}.{_tenths:D2}"); }
+        public virtual void Show(string symbol)
+        {
+            Console.WriteLine($"{WholePart}.{TenthsPart:D2} {symbol}");
+        }
 
         public override string ToString()
         {
